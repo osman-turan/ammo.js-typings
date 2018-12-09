@@ -1,3 +1,5 @@
+declare function Ammo(): Promise<void>;
+
 declare namespace Ammo {
   type VoidPtr = number;
 
@@ -152,22 +154,20 @@ declare namespace Ammo {
 
   class btCollisionObjectWrapper {}
 
-  namespace btCollisionWorld {
-    class RayResultCallback {
-      hasHit(): boolean;
-      m_collisionFilterGroup: number;
-      m_collisionFilterMask: number;
-      m_closestHitFraction: number;
-      m_collisionObject: btCollisionObject;
-    }
+  class RayResultCallback {
+    hasHit(): boolean;
+    m_collisionFilterGroup: number;
+    m_collisionFilterMask: number;
+    m_closestHitFraction: number;
+    m_collisionObject: btCollisionObject;
+  }
 
-    class ClosestRayResultCallback extends RayResultCallback {
-      constructor(from: btVector3, to: btVector3);
-      m_rayFromWorld: btVector3;
-      m_rayToWorld: btVector3;
-      m_hitNormalWorld: btVector3;
-      m_hitPointWorld: btVector3;
-    }
+  class ClosestRayResultCallback extends RayResultCallback {
+    constructor(from: btVector3, to: btVector3);
+    m_rayFromWorld: btVector3;
+    m_rayToWorld: btVector3;
+    m_hitNormalWorld: btVector3;
+    m_hitPointWorld: btVector3;
   }
 
   class btManifoldPoint {
@@ -182,55 +182,53 @@ declare namespace Ammo {
     m_normalWorldOnB: btVector3;
   }
 
-  namespace btCollisionWorld {
-    class ContactResultCallback {
-      addSingleResult(
-        cp: btManifoldPoint,
-        colObj0Wrap: btCollisionObjectWrapper,
-        partId0: number,
-        index0: number,
-        colObj1Wrap: btCollisionObjectWrapper,
-        partId1: number,
-        index1: number
-      ): number;
-    }
+  class ContactResultCallback {
+    addSingleResult(
+      cp: btManifoldPoint,
+      colObj0Wrap: btCollisionObjectWrapper,
+      partId0: number,
+      index0: number,
+      colObj1Wrap: btCollisionObjectWrapper,
+      partId1: number,
+      index1: number
+    ): number;
+  }
 
-    class ConcreteContactResultCallback extends ContactResultCallback {}
+  class ConcreteContactResultCallback extends ContactResultCallback {}
 
-    class LocalShapeInfo {
-      m_shapePart: number;
-      m_triangleIndex: number;
-    }
+  class LocalShapeInfo {
+    m_shapePart: number;
+    m_triangleIndex: number;
+  }
 
-    class LocalConvexResult {
-      constructor(
-        hitCollisionObject: btCollisionObject,
-        localShapeInfo: LocalShapeInfo,
-        hitNormalLocal: btVector3,
-        hitPointLocal: btVector3,
-        hitFraction: number
-      );
-      m_hitCollisionObject: btCollisionObject;
-      m_localShapeInfo: LocalShapeInfo;
-      m_hitNormalLocal: btVector3;
-      m_hitPointLocal: btVector3;
-      m_hitFraction: number;
-    }
+  class LocalConvexResult {
+    constructor(
+      hitCollisionObject: btCollisionObject,
+      localShapeInfo: LocalShapeInfo,
+      hitNormalLocal: btVector3,
+      hitPointLocal: btVector3,
+      hitFraction: number
+    );
+    m_hitCollisionObject: btCollisionObject;
+    m_localShapeInfo: LocalShapeInfo;
+    m_hitNormalLocal: btVector3;
+    m_hitPointLocal: btVector3;
+    m_hitFraction: number;
+  }
 
-    class ConvexResultCallback {
-      hasHit(): boolean;
-      m_collisionFilterGroup: number;
-      m_collisionFilterMask: number;
-      m_closestHitFraction: number;
-    }
+  class ConvexResultCallback {
+    hasHit(): boolean;
+    m_collisionFilterGroup: number;
+    m_collisionFilterMask: number;
+    m_closestHitFraction: number;
+  }
 
-    class ClosestConvexResultCallback extends ConvexResultCallback {
-      constructor(convexFromWorld: btVector3, convexToWorld: btVector3);
-      m_convexFromWorld: btVector3;
-      m_convexToWorld: btVector3;
-      m_hitNormalWorld: btVector3;
-      m_hitPointWorld: btVector3;
-    }
+  class ClosestConvexResultCallback extends ConvexResultCallback {
+    constructor(convexFromWorld: btVector3, convexToWorld: btVector3);
+    m_convexFromWorld: btVector3;
+    m_convexToWorld: btVector3;
+    m_hitNormalWorld: btVector3;
+    m_hitPointWorld: btVector3;
   }
 
   class btCollisionShape {
@@ -440,32 +438,30 @@ declare namespace Ammo {
     constructor();
   }
 
-  namespace btRigidBody {
-    class btRigidBodyConstructionInfo {
-      constructor(
-        mass: number,
-        motionState: btMotionState,
-        collisionShape: btCollisionShape,
-        localInertia?: btVector3
-      );
+  class btRigidBodyConstructionInfo {
+    constructor(
+      mass: number,
+      motionState: btMotionState,
+      collisionShape: btCollisionShape,
+      localInertia?: btVector3
+    );
 
-      m_linearDamping: number;
-      m_angularDamping: number;
-      m_friction: number;
-      m_rollingFriction: number;
-      m_restitution: number;
-      m_linearSleepingThreshold: number;
-      m_angularSleepingThreshold: number;
-      m_additionalDamping: boolean;
-      m_additionalDampingFactor: number;
-      m_additionalLinearDampingThresholdSqr: number;
-      m_additionalAngularDampingThresholdSqr: number;
-      m_additionalAngularDampingFactor: number;
-    }
+    m_linearDamping: number;
+    m_angularDamping: number;
+    m_friction: number;
+    m_rollingFriction: number;
+    m_restitution: number;
+    m_linearSleepingThreshold: number;
+    m_angularSleepingThreshold: number;
+    m_additionalDamping: boolean;
+    m_additionalDampingFactor: number;
+    m_additionalLinearDampingThresholdSqr: number;
+    m_additionalAngularDampingThresholdSqr: number;
+    m_additionalAngularDampingFactor: number;
   }
 
   class btRigidBody extends btCollisionObject {
-    constructor(constructionInfo: btRigidBody.btRigidBodyConstructionInfo);
+    constructor(constructionInfo: btRigidBodyConstructionInfo);
     getCenterOfMassTransform(): btTransform;
     setCenterOfMassTransform(xform: btTransform): void;
     setSleepingThresholds(linear: number, angular: number): void;
@@ -510,8 +506,12 @@ declare namespace Ammo {
     setParam(num: number, value: number, axis: number): void;
   }
 
-  // enum btConstraintParams
-  // TODO: enum btConstraintParams
+  enum btConstraintParams {
+    BT_CONSTRAINT_ERP,
+    BT_CONSTRAINT_STOP_ERP,
+    BT_CONSTRAINT_CFM,
+    BT_CONSTRAINT_STOP_CFM
+  }
 
   class btPoint2PointConstraint extends btTypedConstraint {
     constructor(
@@ -678,7 +678,7 @@ declare namespace Ammo {
     rayTest(
       rayFromWorld: btVector3,
       rayToWorld: btVector3,
-      resultCallback: btCollisionWorld.RayResultCallback
+      resultCallback: RayResultCallback
     ): void;
     getPairCache(): btOverlappingPairCache;
     getDispatchInfo(): btDispatcherInfo;
@@ -693,17 +693,17 @@ declare namespace Ammo {
       castShape: btConvexShape,
       from: btTransform,
       to: btTransform,
-      resultCallback: btCollisionWorld.ConvexResultCallback,
+      resultCallback: ConvexResultCallback,
       allowedCcdPenetration: number
     ): void;
     contactPairTest(
       colObjA: btCollisionObject,
       colObjB: btCollisionObject,
-      resultCallback: btCollisionWorld.ContactResultCallback
+      resultCallback: ContactResultCallback
     ): void;
     contactTest(
       colObj: btCollisionObject,
-      resultCallback: btCollisionWorld.ContactResultCallback
+      resultCallback: ContactResultCallback
     ): void;
     updateSingleAabb(colObj: btCollisionObject): void;
     setDebugDrawer(debugDrawer: btIDebugDraw): void;
@@ -752,31 +752,27 @@ declare namespace Ammo {
     ): number;
   }
 
-  namespace btRaycastVehicle {
-    class btVehicleTuning {
-      constructor();
-      m_suspensionStiffness: number;
-      m_suspensionCompression: number;
-      m_suspensionDamping: number;
-      m_maxSuspensionTravelCm: number;
-      m_frictionSlip: number;
-      m_maxSuspensionForce: number;
-    }
+  class btVehicleTuning {
+    constructor();
+    m_suspensionStiffness: number;
+    m_suspensionCompression: number;
+    m_suspensionDamping: number;
+    m_maxSuspensionTravelCm: number;
+    m_frictionSlip: number;
+    m_maxSuspensionForce: number;
   }
 
-  namespace btDefaultVehicleRaycaster {
-    class btVehicleRaycasterResult {
-      m_hitPointInWorld: btVector3;
-      m_hitNormalInWorld: btVector3;
-      m_distFraction: number;
-    }
+  class btVehicleRaycasterResult {
+    m_hitPointInWorld: btVector3;
+    m_hitNormalInWorld: btVector3;
+    m_distFraction: number;
   }
 
   class btVehicleRaycaster {
     castRay(
       from: btVector3,
       to: btVector3,
-      result: btDefaultVehicleRaycaster.btVehicleRaycasterResult
+      result: btVehicleRaycasterResult
     ): void;
   }
 
@@ -784,17 +780,15 @@ declare namespace Ammo {
     constructor(world: btDynamicsWorld);
   }
 
-  namespace btWheelInfo {
-    class RaycastInfo {
-      m_contactNormalWS: btVector3;
-      m_contactPointWS: btVector3;
-      m_suspensionLength: number;
-      m_hardPointWS: btVector3;
-      m_wheelDirectionWS: btVector3;
-      m_wheelAxleWS: btVector3;
-      m_isInContact: boolean;
-      m_groundObject: any;
-    }
+  class RaycastInfo {
+    m_contactNormalWS: btVector3;
+    m_contactPointWS: btVector3;
+    m_suspensionLength: number;
+    m_hardPointWS: btVector3;
+    m_wheelDirectionWS: btVector3;
+    m_wheelAxleWS: btVector3;
+    m_isInContact: boolean;
+    m_groundObject: any;
   }
 
   class btWheelInfoConstructionInfo {
@@ -826,14 +820,11 @@ declare namespace Ammo {
     m_maxSuspensionTravelCm: number;
     m_wheelsSuspensionForce: number;
     m_bIsFrontWheel: boolean;
-    m_raycastInfo: btWheelInfo.RaycastInfo;
+    m_raycastInfo: RaycastInfo;
     m_chassisConnectionPointCS: btVector3;
     constructor(ci: btWheelInfoConstructionInfo);
     getSuspensionRestLength(): number;
-    updateWheel(
-      chassis: btRigidBody,
-      raycastInfo: btWheelInfo.RaycastInfo
-    ): void;
+    updateWheel(chassis: btRigidBody, raycastInfo: RaycastInfo): void;
     m_worldTransform: btTransform;
     m_wheelDirectionCS: btVector3;
     m_wheelAxleCS: btVector3;
@@ -879,7 +870,7 @@ declare namespace Ammo {
 
   class btRaycastVehicle extends btActionInterface {
     constructor(
-      tuning: btRaycastVehicle.btVehicleTuning,
+      tuning: btVehicleTuning,
       chassis: btRigidBody,
       raycaster: btVehicleRaycaster
     );
@@ -896,7 +887,7 @@ declare namespace Ammo {
       wheelAxleCS: btVector3,
       suspensionRestLength: number,
       wheelRadius: number,
-      tuning: btRaycastVehicle.btVehicleTuning,
+      tuning: btVehicleTuning,
       isFrontWheel: boolean
     ): btWheelInfo;
     getNumWheels(): number;
@@ -957,79 +948,77 @@ declare namespace Ammo {
     m_gravity: btVector3;
   }
 
-  namespace btSoftBody {
-    class Node {
-      m_x: btVector3;
-      m_q: btVector3;
-      m_v: btVector3;
-      m_f: btVector3;
-      m_n: btVector3;
-      m_im: number;
-      m_area: number;
-    }
+  class Node {
+    m_x: btVector3;
+    m_q: btVector3;
+    m_v: btVector3;
+    m_f: btVector3;
+    m_n: btVector3;
+    m_im: number;
+    m_area: number;
+  }
 
-    class tNodeArray {
-      size(): number;
-      at(n: number): Node;
-    }
+  class tNodeArray {
+    size(): number;
+    at(n: number): Node;
+  }
 
-    class Material {
-      m_kLST: number;
-      m_kAST: number;
-      m_kVST: number;
-      m_flags: number;
-    }
+  class Material {
+    m_kLST: number;
+    m_kAST: number;
+    m_kVST: number;
+    m_flags: number;
+  }
 
-    class tMaterialArray {
-      size(): number;
-      at(n: number): Material;
-    }
+  class tMaterialArray {
+    size(): number;
+    at(n: number): Material;
+  }
 
-    class Anchor {
-      m_node: Node;
-      m_local: btVector3;
-      m_body: btRigidBody;
-      m_influence: number;
-      m_c0: btMatrix3x3;
-      m_c1: btVector3;
-      m_c2: number;
-    }
+  class Anchor {
+    m_node: Node;
+    m_local: btVector3;
+    m_body: btRigidBody;
+    m_influence: number;
+    m_c0: btMatrix3x3;
+    m_c1: btVector3;
+    m_c2: number;
+  }
 
-    class tAnchorArray {
-      size(): number;
-      at(n: number): Anchor;
-      clear(): void;
-      push_back(val: Anchor): void;
-      pop_back(): void;
-    }
+  class tAnchorArray {
+    size(): number;
+    at(n: number): Anchor;
+    clear(): void;
+    push_back(val: Anchor): void;
+    pop_back(): void;
+  }
 
-    class Config {
-      kVCF: number;
-      kDP: number;
-      kDG: number;
-      kLF: number;
-      kPR: number;
-      kVC: number;
-      kDF: number;
-      kMT: number;
-      kCHR: number;
-      kKHR: number;
-      kSHR: number;
-      kAHR: number;
-      kSRHR_CL: number;
-      kSKHR_CL: number;
-      kSSHR_CL: number;
-      kSR_SPLT_CL: number;
-      kSK_SPLT_CL: number;
-      kSS_SPLT_CL: number;
-      maxvolume: number;
-      timescale: number;
-      viterations: number;
-      piterations: number;
-      diterations: number;
-      citerations: number;
-      collisions: number;
-    }
+  class Config {
+    kVCF: number;
+    kDP: number;
+    kDG: number;
+    kLF: number;
+    kPR: number;
+    kVC: number;
+    kDF: number;
+    kMT: number;
+    kCHR: number;
+    kKHR: number;
+    kSHR: number;
+    kAHR: number;
+    kSRHR_CL: number;
+    kSKHR_CL: number;
+    kSSHR_CL: number;
+    kSR_SPLT_CL: number;
+    kSK_SPLT_CL: number;
+    kSS_SPLT_CL: number;
+    maxvolume: number;
+    timescale: number;
+    viterations: number;
+    piterations: number;
+    diterations: number;
+    citerations: number;
+    collisions: number;
   }
 
   class btSoftBody extends btCollisionObject {
@@ -1039,32 +1028,32 @@ declare namespace Ammo {
       x: btVector3,
       m: number[]
     );
-    m_cfg: btSoftBody.Config;
-    m_nodes: btSoftBody.tNodeArray;
-    m_materials: btSoftBody.tMaterialArray;
-    m_anchors: btSoftBody.tAnchorArray;
+    m_cfg: Config;
+    m_nodes: tNodeArray;
+    m_materials: tMaterialArray;
+    m_anchors: tAnchorArray;
     checkLink(node0: number, node1: number): boolean;
     checkFace(node0: number, node1: number, node2: number): boolean;
-    appendMaterial(): btSoftBody.Material;
+    appendMaterial(): Material;
     appendNode(x: btVector3, m: number): void;
     appendLink(
       node0: number,
       node1: number,
-      mat: btSoftBody.Material,
+      mat: Material,
       bcheckexist: boolean
     ): void;
     appendFace(
       node0: number,
       node1: number,
       node2: number,
-      mat: btSoftBody.Material
+      mat: Material
     ): void;
     appendTetra(
       node0: number,
       node1: number,
       node2: number,
       node3: number,
-      mat: btSoftBody.Material
+      mat: Material
     ): void;
     appendAnchor(
       node: number,
@@ -1083,10 +1072,7 @@ declare namespace Ammo {
     rotate(rot: btQuaternion): void;
     scale(scl: btVector3): void;
     generateClusters(k: number, maxiterations?: number): number;
-    generateBendingConstraints(
-      distance: number,
-      mat: btSoftBody.Material
-    ): number;
+    generateBendingConstraints(distance: number, mat: Material): number;
     upcast(colObj: btCollisionObject): btSoftBody;
   }
 
@@ -1190,15 +1176,15 @@ declare namespace Ammo {
     | btDefaultMotionState
     | btCollisionObject
     | btCollisionObjectWrapper
-    | btCollisionWorld.RayResultCallback
-    | btCollisionWorld.ClosestRayResultCallback
+    | RayResultCallback
+    | ClosestRayResultCallback
     | btManifoldPoint
-    | btCollisionWorld.ContactResultCallback
-    | btCollisionWorld.ConcreteContactResultCallback
-    | btCollisionWorld.LocalShapeInfo
-    | btCollisionWorld.LocalConvexResult
-    | btCollisionWorld.ConvexResultCallback
-    | btCollisionWorld.ClosestConvexResultCallback
+    | ContactResultCallback
+    | ConcreteContactResultCallback
+    | LocalShapeInfo
+    | LocalConvexResult
+    | ConvexResultCallback
+    | ClosestConvexResultCallback
     | btCollisionShape
     | btConvexShape
     | btConvexTriangleMeshShape
@@ -1234,7 +1220,7 @@ declare namespace Ammo {
     | btBroadphaseInterface
     | btCollisionConfiguration
     | btDbvtBroadphase
-    | btRigidBody.btRigidBodyConstructionInfo
+    | btRigidBodyConstructionInfo
     | btRigidBody
     | btConstraintSetting
     | btTypedConstraint
@@ -1252,11 +1238,11 @@ declare namespace Ammo {
     | btContactSolverInfo
     | btDynamicsWorld
     | btDiscreteDynamicsWorld
-    | btRaycastVehicle.btVehicleTuning
-    | btDefaultVehicleRaycaster.btVehicleRaycasterResult
+    | btVehicleTuning
+    | btVehicleRaycasterResult
     | btVehicleRaycaster
     | btDefaultVehicleRaycaster
-    | btWheelInfo.RaycastInfo
+    | RaycastInfo
     | btWheelInfoConstructionInfo
     | btWheelInfo
     | btActionInterface
@@ -1266,13 +1252,13 @@ declare namespace Ammo {
     | btPairCachingGhostObject
     | btGhostPairCallback
     | btSoftBodyWorldInfo
-    | btSoftBody.Node
-    | btSoftBody.tNodeArray
-    | btSoftBody.Material
-    | btSoftBody.tMaterialArray
-    | btSoftBody.Anchor
-    | btSoftBody.tAnchorArray
-    | btSoftBody.Config
+    | Node
+    | tNodeArray
+    | Material
+    | tMaterialArray
+    | Anchor
+    | tAnchorArray
+    | Config
     | btSoftBody
     | btSoftBodyRigidBodyCollisionConfiguration
     | btSoftBodySolver
