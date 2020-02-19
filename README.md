@@ -24,13 +24,13 @@ $ npm install github:osman-turan/ammo.js-typings
 
 ## Building
 
-If you want to modify WebIDL and generate corresponding type definitions, clone this repository and run the following command to install required NPM packages:
+If you want to modify WebIDL bindings and generate corresponding type definitions, clone this repository and run the following command to install required NPM packages:
 
 ```shell
 $ npm install
 ```
 
-Then, apply your changes to "ammo.js" file and run the following command to generate updated type definitions:
+Then, apply your changes to "ammo.idl" file and run the following command to generate updated type definitions:
 
 ```shell
 $ npm run build
