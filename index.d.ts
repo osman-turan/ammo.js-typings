@@ -94,6 +94,7 @@ declare namespace Ammo {
     op_mulq(q: btQuaternion): btQuaternion;
     op_div(s: number): btQuaternion;
   }
+
   class btMatrix3x3 {
     setEulerZYX(ex: number, ey: number, ez: number): void;
     getRotation(q: btQuaternion): void;
@@ -110,6 +111,8 @@ declare namespace Ammo {
     getRotation(): btQuaternion;
     getBasis(): btMatrix3x3;
     setFromOpenGLMatrix(m: number[]): void;
+    inverse(): btTransform;
+    op_mul(t: btTransform): btTransform;
   }
 
   class btMotionState {
@@ -136,6 +139,9 @@ declare namespace Ammo {
     isKinematicObject(): boolean;
     isStaticObject(): boolean;
     isStaticOrKinematicObject(): boolean;
+    getRestitution(): number;
+    getFriction(): number;
+    getRollingFriction(): number;
     setRestitution(rest: number): void;
     setFriction(frict: number): void;
     setRollingFriction(frict: number): void;
@@ -150,9 +156,14 @@ declare namespace Ammo {
     setUserIndex(index: number): void;
     getUserPointer(): VoidPtr;
     setUserPointer(userPointer: VoidPtr): void;
+    getBroadphaseHandle(): btBroadphaseProxy;
   }
 
-  class btCollisionObjectWrapper {}
+  class btCollisionObjectWrapper {
+    getWorldTransform(): btTransform;
+    getCollisionObject(): btCollisionObject;
+    getCollisionShape(): btCollisionShape;
+  }
 
   class RayResultCallback {
     hasHit(): boolean;
@@ -170,6 +181,26 @@ declare namespace Ammo {
     m_hitPointWorld: btVector3;
   }
 
+  class btConstCollisionObjectArray {
+    size(): number;
+    at(n: number): btCollisionObject;
+  }
+
+  class btScalarArray {
+    size(): number;
+    at(n: number): number;
+  }
+
+  class AllHitsRayResultCallback extends RayResultCallback {
+    constructor(from: btVector3, to: btVector3);
+    m_collisionObjects: btConstCollisionObjectArray;
+    m_rayFromWorld: btVector3;
+    m_rayToWorld: btVector3;
+    m_hitNormalWorld: btVector3Array;
+    m_hitPointWorld: btVector3Array;
+    m_hitFractions: btScalarArray;
+  }
+
   class btManifoldPoint {
     getPositionWorldOnA(): btVector3;
     getPositionWorldOnB(): btVector3;
@@ -180,6 +211,7 @@ declare namespace Ammo {
     m_positionWorldOnB: btVector3;
     m_positionWorldOnA: btVector3;
     m_normalWorldOnB: btVector3;
+    m_userPersistentData: any;
   }
 
   class ContactResultCallback {
@@ -194,7 +226,18 @@ declare namespace Ammo {
     ): number;
   }
 
-  class ConcreteContactResultCallback extends ContactResultCallback {}
+  class ConcreteContactResultCallback extends ContactResultCallback {
+    constructor();
+    addSingleResult(
+      cp: btManifoldPoint,
+      colObj0Wrap: btCollisionObjectWrapper,
+      partId0: number,
+      index0: number,
+      colObj1Wrap: btCollisionObjectWrapper,
+      partId1: number,
+      index1: number
+    ): number;
+  }
 
   class LocalShapeInfo {
     m_shapePart: number;
@@ -296,24 +339,12 @@ declare namespace Ammo {
     getMargin(): number;
   }
 
+  class btMultiSphereShape extends btCollisionShape {
+    constructor(positions: btVector3, radii: number[], numPoints: number);
+  }
+
   class btConeShape extends btCollisionShape {
     constructor(radius: number, height: number);
-  }
-
-  class btConvexHullShape extends btCollisionShape {
-    constructor(points?: number[], numPoints?: number);
-    addPoint(point: btVector3, recalculateLocalAABB?: boolean): void;
-    setMargin(margin: number): void;
-    getMargin(): number;
-    getNumVertices(): number;
-    initializePolyhedralFeatures(shiftVerticesByMargin: number): boolean;
-  }
-
-  class btShapeHull {
-    constructor(shape: btConvexShape);
-    buildHull(margin: number): boolean;
-    numVertices(): number;
-    getVertexPointer(): btVector3;
   }
 
   class btConeShapeX extends btConeShape {
@@ -324,17 +355,77 @@ declare namespace Ammo {
     constructor(radius: number, height: number);
   }
 
+  class btIntArray {
+    size(): number;
+    at(n: number): number;
+  }
+
+  class btFace {
+    m_indices: btIntArray;
+    m_plane: number[];
+  }
+
+  class btVector3Array {
+    size(): number;
+    at(n: number): btVector3;
+  }
+
+  class btFaceArray {
+    size(): number;
+    at(n: number): btFace;
+  }
+
+  class btConvexPolyhedron {
+    m_vertices: btVector3Array;
+    m_faces: btFaceArray;
+  }
+
+  class btConvexHullShape extends btCollisionShape {
+    constructor(points?: number[], numPoints?: number);
+    addPoint(point: btVector3, recalculateLocalAABB?: boolean): void;
+    setMargin(margin: number): void;
+    getMargin(): number;
+    getNumVertices(): number;
+    initializePolyhedralFeatures(shiftVerticesByMargin: number): boolean;
+    recalcLocalAabb(): void;
+    getConvexPolyhedron(): btConvexPolyhedron;
+  }
+
+  class btShapeHull {
+    constructor(shape: btConvexShape);
+    buildHull(margin: number): boolean;
+    numVertices(): number;
+    getVertexPointer(): btVector3;
+  }
+
   class btCompoundShape extends btCollisionShape {
     constructor(enableDynamicAabbTree?: boolean);
     addChildShape(localTransform: btTransform, shape: btCollisionShape): void;
+    removeChildShape(shape: btCollisionShape): void;
     removeChildShapeByIndex(childShapeindex: number): void;
     getNumChildShapes(): number;
     getChildShape(index: number): btCollisionShape;
+    updateChildTransform(
+      childIndex: number,
+      newChildTransform: btTransform,
+      shouldRecalculateLocalAabb?: boolean
+    ): void;
     setMargin(margin: number): void;
     getMargin(): number;
   }
 
-  class btStridingMeshInterface {}
+  class btStridingMeshInterface {
+    setScaling(scaling: btVector3): void;
+  }
+
+  class btIndexedMesh {
+    m_numTriangles: number;
+  }
+
+  class btIndexedMeshArray {
+    size(): number;
+    at(n: number): btIndexedMesh;
+  }
 
   class btTriangleMesh extends btStridingMeshInterface {
     constructor(use32bitIndices?: boolean, use4componentVertices?: boolean);
@@ -344,6 +435,12 @@ declare namespace Ammo {
       vertex2: btVector3,
       removeDuplicateVertices?: boolean
     ): void;
+    findOrAddVertex(
+      vertex: btVector3,
+      removeDuplicateVertices: boolean
+    ): number;
+    addIndex(index: number): void;
+    getIndexedMeshArray(): btIndexedMeshArray;
   }
 
   enum PHY_ScalarType {
@@ -356,6 +453,10 @@ declare namespace Ammo {
   }
 
   class btConcaveShape extends btCollisionShape {}
+
+  class btEmptyShape extends btConcaveShape {
+    constructor();
+  }
 
   class btStaticPlaneShape extends btConcaveShape {
     constructor(planeNormal: btVector3, planeConstant: number);
@@ -418,6 +519,7 @@ declare namespace Ammo {
     setInternalGhostPairCallback(
       ghostPairCallback: btOverlappingPairCallback
     ): void;
+    getNumOverlappingPairs(): number;
   }
 
   class btAxisSweep3 {
@@ -430,12 +532,19 @@ declare namespace Ammo {
     );
   }
 
-  class btBroadphaseInterface {}
+  class btBroadphaseInterface {
+    getOverlappingPairCache(): btOverlappingPairCache;
+  }
 
   class btCollisionConfiguration {}
 
   class btDbvtBroadphase {
     constructor();
+  }
+
+  class btBroadphaseProxy {
+    m_collisionFilterGroup: number;
+    m_collisionFilterMask: number;
   }
 
   class btRigidBodyConstructionInfo {
@@ -445,7 +554,6 @@ declare namespace Ammo {
       collisionShape: btCollisionShape,
       localInertia?: btVector3
     );
-
     m_linearDamping: number;
     m_angularDamping: number;
     m_friction: number;
@@ -465,8 +573,11 @@ declare namespace Ammo {
     getCenterOfMassTransform(): btTransform;
     setCenterOfMassTransform(xform: btTransform): void;
     setSleepingThresholds(linear: number, angular: number): void;
+    getLinearDamping(): number;
+    getAngularDamping(): number;
     setDamping(lin_damping: number, ang_damping: number): void;
     setMassProps(mass: number, inertia: btVector3): void;
+    getLinearFactor(): btVector3;
     setLinearFactor(linearFactor: btVector3): void;
     applyTorque(torque: btVector3): void;
     applyLocalTorque(torque: btVector3): void;
@@ -483,12 +594,14 @@ declare namespace Ammo {
     setAngularVelocity(ang_vel: btVector3): void;
     getMotionState(): btMotionState;
     setMotionState(motionState: btMotionState): void;
+    getAngularFactor(): btVector3;
     setAngularFactor(angularFactor: btVector3): void;
     upcast(colObj: btCollisionObject): btRigidBody;
     getAabb(aabbMin: btVector3, aabbMax: btVector3): void;
     applyGravity(): void;
     getGravity(): btVector3;
     setGravity(acceleration: btVector3): void;
+    getBroadphaseProxy(): btBroadphaseProxy;
   }
 
   class btConstraintSetting {
@@ -525,7 +638,6 @@ declare namespace Ammo {
     setPivotB(pivotB: btVector3): void;
     getPivotInA(): btVector3;
     getPivotInB(): btVector3;
-
     m_setting: btConstraintSetting;
   }
 
@@ -565,6 +677,9 @@ declare namespace Ammo {
     enableSpring(index: number, onOff: boolean): void;
     setStiffness(index: number, stiffness: number): void;
     setDamping(index: number, damping: number): void;
+    setEquilibriumPoint(index: number, val: number): void;
+    setEquilibriumPoint(index: number): void;
+    setEquilibriumPoint(): void;
   }
 
   class btSequentialImpulseConstraintSolver {
@@ -750,6 +865,9 @@ declare namespace Ammo {
       maxSubSteps?: number,
       fixedTimeStep?: number
     ): number;
+    setContactAddedCallback(funcpointer: number): void;
+    setContactProcessedCallback(funcpointer: number): void;
+    setContactDestroyedCallback(funcpointer: number): void;
   }
 
   class btVehicleTuning {
@@ -1178,6 +1296,9 @@ declare namespace Ammo {
     | btCollisionObjectWrapper
     | RayResultCallback
     | ClosestRayResultCallback
+    | btConstCollisionObjectArray
+    | btScalarArray
+    | AllHitsRayResultCallback
     | btManifoldPoint
     | ContactResultCallback
     | ConcreteContactResultCallback
@@ -1196,15 +1317,24 @@ declare namespace Ammo {
     | btCylinderShapeX
     | btCylinderShapeZ
     | btSphereShape
+    | btMultiSphereShape
     | btConeShape
-    | btConvexHullShape
-    | btShapeHull
     | btConeShapeX
     | btConeShapeZ
+    | btIntArray
+    | btFace
+    | btVector3Array
+    | btFaceArray
+    | btConvexPolyhedron
+    | btConvexHullShape
+    | btShapeHull
     | btCompoundShape
     | btStridingMeshInterface
+    | btIndexedMesh
+    | btIndexedMeshArray
     | btTriangleMesh
     | btConcaveShape
+    | btEmptyShape
     | btStaticPlaneShape
     | btTriangleMeshShape
     | btBvhTriangleMeshShape
@@ -1220,6 +1350,7 @@ declare namespace Ammo {
     | btBroadphaseInterface
     | btCollisionConfiguration
     | btDbvtBroadphase
+    | btBroadphaseProxy
     | btRigidBodyConstructionInfo
     | btRigidBody
     | btConstraintSetting
