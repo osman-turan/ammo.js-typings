@@ -243,5 +243,5 @@ class AmmoJsTypeDefinitionsGenerator {
 }
 
 const generator = new AmmoJsTypeDefinitionsGenerator();
-const output = generator.generate(path.resolve(__dirname, "ammo.webidl"));
+const output = generator.generate(path.resolve(__dirname, "ammo.idl"));
 fs.writeFileSync(path.resolve(__dirname, "index.d.ts"), output);
