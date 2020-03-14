@@ -1,6 +1,6 @@
 {
   "name": "@types/ammo.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "TypeScript type definitions for Ammo.js",
   "main": "index.js",
   "scripts": {
@@ -18,12 +18,12 @@
   },
   "homepage": "https://github.com/osman-turan/ammo.js-typings#readme",
   "devDependencies": {
-    "@types/node": "^13.7.2",
+    "@types/node": "^13.9.1",
     "@types/webidl2": "^23.8.0",
     "ts-node": "^8.6.2",
-    "tslint": "^6.0.0",
+    "tslint": "^6.1.0",
     "tslint-config-typings": "^0.3.1",
-    "typescript": "^3.7.5",
-    "webidl2": "^23.10.1"
+    "typescript": "^3.8.3",
+    "webidl2": "^23.11.0"
   }
 }
